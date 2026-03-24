@@ -1,0 +1,364 @@
+openapi: 3.0.0
+info:
+  title: Tirana Real Estate Companion API
+  version: "1.0.0"
+  description: >
+    Backend API for browsing listings, viewing listing details,
+    getting ML price estimates, and fetching comparable properties.
+
+servers:
+  - url: http://localhost:5000/api
+
+paths:
+  /listings:
+    get:
+      summary: List property listings
+      description: Returns a list of listing summaries, optionally filtered.
+      parameters:
+        - name: min_price
+          in: query
+          schema:
+            type: number
+        - name: max_price
+          in: query
+          schema:
+            type: number
+        - name: min_bedrooms
+          in: query
+          schema:
+            type: integer
+        - name: max_bedrooms
+          in: query
+          schema:
+            type: integer
+        - name: min_bathrooms
+          in: query
+          schema:
+            type: integer
+        - name: max_bathrooms
+          in: query
+          schema:
+            type: integer
+        - name: min_sqm
+          in: query
+          schema:
+            type: number
+        - name: max_sqm
+          in: query
+          schema:
+            type: number
+        - name: furnishing_status
+          in: query
+          schema:
+            type: string
+        - name: has_elevator
+          in: query
+          schema:
+            type: boolean
+        - name: has_terrace
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: List of listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ListingSummary"
+                  total:
+                    type: integer
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /listings/{listing_id}:
+    get:
+      summary: Get listing details
+      description: Returns full details for a single listing.
+      parameters:
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            oneOf:
+              - type: string
+              - type: integer
+      responses:
+        "200":
+          description: Listing details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListingDetails"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /listings/{listing_id}/estimate:
+    get:
+      summary: Get ML price estimate
+      description: Returns an ML-based price estimate and fair range for a listing.
+      parameters:
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            oneOf:
+              - type: string
+              - type: integer
+      responses:
+        "200":
+          description: Price estimate and fair range
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstimateResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /listings/{listing_id}/comps:
+    get:
+      summary: Get comparable properties
+      description: Returns comparable listings (comps) for a given listing.
+      parameters:
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            oneOf:
+              - type: string
+              - type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 5
+      responses:
+        "200":
+          description: Comparable listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  listing_id:
+                    oneOf:
+                      - type: string
+                      - type: integer
+                  comps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ComparableListing"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  schemas:
+    ListingSummary:
+      type: object
+      properties:
+        listing_id:
+          oneOf:
+            - type: string
+            - type: integer
+        price_in_euro:
+          type: number
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        bedrooms:
+          type: integer
+          nullable: true
+        bathrooms:
+          type: integer
+          nullable: true
+        square_meters:
+          type: number
+          nullable: true
+        floor:
+          type: number
+          nullable: true
+        has_elevator:
+          type: boolean
+          nullable: true
+        has_terrace:
+          type: boolean
+          nullable: true
+        furnishing_status:
+          type: string
+          nullable: true
+
+    ListingDetails:
+      type: object
+      properties:
+        listing_id:
+          oneOf:
+            - type: string
+            - type: integer
+        price_in_euro:
+          type: number
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        bedrooms:
+          type: integer
+          nullable: true
+        bathrooms:
+          type: integer
+          nullable: true
+        square_meters:
+          type: number
+          nullable: true
+        floor:
+          type: number
+          nullable: true
+        furnishing_status:
+          type: string
+          nullable: true
+        has_elevator:
+          type: boolean
+          nullable: true
+        has_terrace:
+          type: boolean
+          nullable: true
+        has_carport:
+          type: boolean
+          nullable: true
+        has_garage:
+          type: boolean
+          nullable: true
+        has_garden:
+          type: boolean
+          nullable: true
+        has_parking_space:
+          type: boolean
+          nullable: true
+        property_status:
+          type: string
+          nullable: true
+        property_type:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        description:
+          type: string
+          nullable: true
+
+    EstimateResponse:
+      type: object
+      properties:
+        listing_id:
+          oneOf:
+            - type: string
+            - type: integer
+        estimated_price:
+          type: number
+          nullable: true
+        fair_range_low:
+          type: number
+          nullable: true
+        fair_range_high:
+          type: number
+          nullable: true
+        model_version:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+
+    ComparableListing:
+      type: object
+      properties:
+        listing_id:
+          oneOf:
+            - type: string
+            - type: integer
+        price_in_euro:
+          type: number
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        bedrooms:
+          type: integer
+          nullable: true
+        bathrooms:
+          type: integer
+          nullable: true
+        square_meters:
+          type: number
+          nullable: true
+        distance_meters:
+          type: number
+          nullable: true
+        similarity_reason:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              nullable: true
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
