@@ -93,7 +93,7 @@ Use this as a checklist for manual development or when prompting AI coding agent
 
 ## Phase 2 — Full backend data integration
 
-**Status:** ⏳ Not started
+**Status:** ✅ Complete
 
 **Goal:** Replace stubs with real data for listings and details endpoints. Implement all filters.
 
@@ -123,7 +123,7 @@ Use this as a checklist for manual development or when prompting AI coding agent
 
 ## Phase 3 — Baseline ML model
 
-**Status:** ⏳ Not started
+**Status:** ✅ Complete
 
 **Goal:** Train and save a simple, working price prediction model.
 

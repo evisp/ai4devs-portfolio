@@ -3,4 +3,6 @@ flask-cors==5.*
 pandas==2.*
 scikit-learn==1.*
 joblib==1.*
+matplotlib==3.*
+seaborn==0.*
 pytest==8.*
