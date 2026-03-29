@@ -157,7 +157,7 @@ Use this as a checklist for manual development or when prompting AI coding agent
 
 ## Phase 4 — Backend ML integration
 
-**Status:** ⏳ Not started
+**Status:** ✅ Complete
 
 **Goal:** Make `GET /api/listings/<listing_id>/estimate` return real ML predictions.
 

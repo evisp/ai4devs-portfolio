@@ -83,7 +83,7 @@ All endpoints under `http://localhost:5000/api/`:
 |--------|------|-------------|
 | GET | `/api/listings` | Browse listings with filters + pagination |
 | GET | `/api/listings/<id>` | Full details for one listing |
-| GET | `/api/listings/<id>/estimate` | ML price estimate (stub until Phase 4) |
+| GET | `/api/listings/<id>/estimate` | ML price estimate (Phase 4: real predictions) |
 | GET | `/api/listings/<id>/comps` | Comparable properties (stub until Phase 5) |
 
 See `docs/api/08-api-contract.yaml` for the full OpenAPI spec.
@@ -127,7 +127,7 @@ See [`docs/concept/development-roadmap.md`](docs/concept/development-roadmap.md)
 | 1 | Backend scaffold + data loading + preprocessing | ✅ Complete |
 | 2 | Full backend data integration | ✅ Complete |
 | 3 | Baseline ML model | ✅ Complete |
-| 4 | Backend ML integration | ⏳ Not started |
+| 4 | Backend ML integration | ✅ Complete |
 | 5 | Comparable properties (comps) | ⏳ Not started |
 | 6 | Frontend: Jinja2 templates + Bootstrap | ⏳ Not started |
 | 7 | UI polish | ⏳ Not started |

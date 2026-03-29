@@ -4,8 +4,8 @@ app.py — Flask application for Tirana Real Estate Companion.
 Exposes the API defined in docs/api/08-api-contract.yaml:
   GET /api/listings              — browse with filters + pagination
   GET /api/listings/<id>         — listing details
-  GET /api/listings/<id>/estimate — ML price estimate (stub)
-  GET /api/listings/<id>/comps   — comparable properties (stub)
+  GET /api/listings/<id>/estimate — ML price estimate (Phase 4: real predictions)
+  GET /api/listings/<id>/comps   — comparable properties (stub until Phase 5)
 """
 
 import os
@@ -13,6 +13,7 @@ import logging
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from preprocessing import load_and_preprocess
+import ml_service
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -41,6 +42,9 @@ display_data, ml_data = load_and_preprocess(DATA_PATH)
 # Build a lookup dict for O(1) access by listing_id
 listings_by_id = {r["listing_id"]: r for r in display_data}
 logger.info("Ready — %d listings available, %d in ML dataset", len(display_data), len(ml_data))
+
+# Load ML model (Phase 4) — non-fatal if model file is missing
+ml_service.load_model()
 
 # ---------------------------------------------------------------------------
 # Summary fields (ListingSummary schema)
@@ -161,19 +165,24 @@ def get_listing_detail(listing_id: int):
 
 @app.route("/api/listings/<int:listing_id>/estimate", methods=["GET"])
 def get_listing_estimate(listing_id: int):
-    """Return ML price estimate (stub until Phase 4)."""
+    """Return real ML price estimate for a listing (Phase 4)."""
     listing = listings_by_id.get(listing_id)
     if listing is None:
         return _error_response("NOT_FOUND", f"Listing {listing_id} not found", 404)
 
-    # Stub response — will be replaced in Phase 4
+    try:
+        result = ml_service.estimate_price(listing)
+    except Exception as e:
+        logger.exception("Error generating estimate for listing %d", listing_id)
+        return _error_response("INTERNAL_ERROR", str(e), 500)
+
     return jsonify({
-        "listing_id": listing_id,
-        "estimated_price": None,
-        "fair_range_low": None,
-        "fair_range_high": None,
-        "model_version": None,
-        "notes": "ML model not yet integrated. Coming in Phase 4.",
+        "listing_id":       listing_id,
+        "estimated_price":  result["estimated_price"],
+        "fair_range_low":   result["fair_range_low"],
+        "fair_range_high":  result["fair_range_high"],
+        "model_version":    result["model_version"],
+        "notes":            result["notes"],
     })
 
 
