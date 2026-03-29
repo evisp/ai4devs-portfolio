@@ -28,7 +28,7 @@ The server starts on `http://localhost:5000`.
 | `GET /api/listings` | Browse listings with filters and pagination |
 | `GET /api/listings/<id>` | Listing details |
 | `GET /api/listings/<id>/estimate` | ML price estimate (Phase 4: real predictions) |
-| `GET /api/listings/<id>/comps` | Comparable properties (stub until Phase 5) |
+| `GET /api/listings/<id>/comps` | Comparable properties (Phase 5: real similarities) |
 
 ## Data
 

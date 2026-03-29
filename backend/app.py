@@ -14,6 +14,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from preprocessing import load_and_preprocess
 import ml_service
+import comps_service
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -188,15 +189,22 @@ def get_listing_estimate(listing_id: int):
 
 @app.route("/api/listings/<int:listing_id>/comps", methods=["GET"])
 def get_listing_comps(listing_id: int):
-    """Return comparable properties (stub until Phase 5)."""
+    """Return comparable properties (Phase 5)."""
     listing = listings_by_id.get(listing_id)
     if listing is None:
         return _error_response("NOT_FOUND", f"Listing {listing_id} not found", 404)
 
-    # Stub response — will be replaced in Phase 5
+    limit = request.args.get("limit", default=5, type=int)
+    
+    try:
+        comps = comps_service.get_similar_listings(listing_id, display_data, limit)
+    except Exception as e:
+        logger.exception("Error generating comps for listing %d", listing_id)
+        return _error_response("INTERNAL_ERROR", str(e), 500)
+
     return jsonify({
         "listing_id": listing_id,
-        "comps": [],
+        "comps": comps,
     })
 
 

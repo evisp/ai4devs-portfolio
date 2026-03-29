@@ -181,7 +181,7 @@ Use this as a checklist for manual development or when prompting AI coding agent
 
 ## Phase 5 — Comparable properties (comps)
 
-**Status:** ⏳ Not started
+**Status:** ✅ Complete
 
 **Goal:** Implement comps logic and wire it to the API.
 

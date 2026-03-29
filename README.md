@@ -84,7 +84,7 @@ All endpoints under `http://localhost:5000/api/`:
 | GET | `/api/listings` | Browse listings with filters + pagination |
 | GET | `/api/listings/<id>` | Full details for one listing |
 | GET | `/api/listings/<id>/estimate` | ML price estimate (Phase 4: real predictions) |
-| GET | `/api/listings/<id>/comps` | Comparable properties (stub until Phase 5) |
+| GET | `/api/listings/<id>/comps` | Comparable properties (Phase 5: real similarities) |
 
 See `docs/api/08-api-contract.yaml` for the full OpenAPI spec.
 
